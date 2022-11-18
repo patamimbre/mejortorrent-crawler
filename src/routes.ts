@@ -45,6 +45,5 @@ router.addHandler(LABELS.TORRENTS, async ({ request, $, log }) => {
         entries,
     };
 
-    const dataset = await Dataset.open(entry.search);
-    await dataset.pushData(data);
+    await Dataset.pushData(data);
 });
