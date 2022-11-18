@@ -1,6 +1,5 @@
 import { BASE_URL, LABELS } from './constants.js';
-// For more information, see https://crawlee.dev/
-import { CheerioCrawler, KeyValueStore } from 'crawlee';
+import { CheerioCrawler } from 'crawlee';
 import { router } from './routes.js';
 
 export default async function crawl(search: string) {

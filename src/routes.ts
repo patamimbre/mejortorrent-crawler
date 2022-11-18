@@ -1,6 +1,5 @@
 import { LABELS } from './constants.js';
-import { Dataset, createCheerioRouter, KeyValueStore } from 'crawlee';
-import { v4 as uuid } from 'uuid';
+import { Dataset, createCheerioRouter } from 'crawlee';
 
 export const router = createCheerioRouter();
 
@@ -32,27 +31,20 @@ router.addHandler(LABELS.TORRENTS, async ({ request, $, log }) => {
 
     const entries = $('tbody.bg-mejortorrent-green tr').map((_, el) => {
         const $el = $(el);
-        const id = $el.find('td:first-child').text();
-        const episodes = $el.find('td:nth-child(2)').text();
-        const date = $el.find('td:nth-child(3)').text();
-        const key = $el.find('td:nth-child(4)').text();
+        const id = $el.find('td:first-child').text().trim();
+        const episodes = $el.find('td:nth-child(2)').text().trim();
+        const date = $el.find('td:nth-child(3)').text().trim();
+        const key = $el.find('td:nth-child(4) p').text();
         const downloadUrl = $el.find('td:nth-child(5) a').attr('href');
 
         return { id, episodes, date, key, downloadUrl };
     }).get();
 
-    const cleanEntriesValue = entries.map(entry => Object.fromEntries(Object.entries(entry).map(([key, value]) => [key, value?.replace(/\n/g, '').replace(/\s-/g,'')])));
-
     const data = {
         ...entry,
-        entries: cleanEntriesValue,
+        entries,
     };
-
-    // log.info(JSON.stringify(data, null, 2));
 
     const dataset = await Dataset.open(entry.search);
     await dataset.pushData(data);
-
-    // const store = await KeyValueStore.open(entry.search);
-    // await store.setValue(uuid(), data);
 });
