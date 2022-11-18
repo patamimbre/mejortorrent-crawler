@@ -1,5 +1,5 @@
 import { LABELS } from './constants.js';
-import { Dataset, createCheerioRouter, KeyValueStore,  } from 'crawlee';
+import { Dataset, createCheerioRouter, KeyValueStore } from 'crawlee';
 import { v4 as uuid } from 'uuid';
 
 export const router = createCheerioRouter();
