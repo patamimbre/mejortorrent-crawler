@@ -13,10 +13,10 @@ export const inputSearchTerm = async () => new Input({
   message: 'Termino de busqueda',
 }).run();
 
-export const inputDownloadDirectory = async () => new Input({
+export const inputDownloadDirectory = async (defaultPath?: string) => new Input({
   name: 'download',
   message: 'Directorio',
-  default: './downloads',
+  default: defaultPath,
 }).run();
 
 export const selectItemsToDownload = async (choices: {title: string}[]) => new MultiSelect({

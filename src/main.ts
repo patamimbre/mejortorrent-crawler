@@ -1,5 +1,5 @@
 import { alphabetical, flat, select } from 'radash'
-import { Dataset, purgeDefaultStorages } from 'crawlee';
+import { Dataset, KeyValueStore, purgeDefaultStorages } from 'crawlee';
 import crawl from "./crawler.js";
 import { acceptDownloadItems, inputDownloadDirectory, inputSearchTerm, selectItemsToDownload } from "./cli.js";
 import { downloadTorrents } from './download.js';
@@ -18,7 +18,8 @@ async function main() {
   const selectedTitles = await selectItemsToDownload(items.map(({ title }) => ({ title })));
   if (!selectedTitles.length) exit('No items selected');
 
-  const directory = await inputDownloadDirectory();
+  const { DOWNLOAD_DIR } = await KeyValueStore.getInput() as { DOWNLOAD_DIR: string };
+  const directory = await inputDownloadDirectory(DOWNLOAD_DIR);
 
   const accept = await acceptDownloadItems(selectedTitles.length);
   if (!accept) exit('Download cancelled');
