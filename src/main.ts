@@ -1,37 +1,37 @@
+import { alphabetical, flat, select } from 'radash'
 import { Dataset, purgeDefaultStorages } from 'crawlee';
 import crawl from "./crawler.js";
 import { acceptDownloadItems, inputDownloadDirectory, inputSearchTerm, selectItemsToDownload } from "./cli.js";
 import { downloadTorrents } from './download.js';
+import { exit } from './utils.js';
 
-const search = await inputSearchTerm();
+async function main() {
+  const search = await inputSearchTerm();
+  await crawl(search);
 
-await crawl(search);
+  const dataset = await Dataset.open();
+  await purgeDefaultStorages();
 
-const dataset = await Dataset.open();
-await purgeDefaultStorages();
+  const items = alphabetical((await dataset.getData()).items, x => x.title);
+  if (items.length === 0) exit('No items found');
 
-const items = (await dataset.getData()).items;
+  const selectedTitles = await selectItemsToDownload(items.map(({ title }) => ({ title })));
+  if (!selectedTitles.length) exit('No items selected');
 
-if (items.length === 0) {
-  console.log('No se han encontrado resultados');
-  process.exit(0);
+  const directory = await inputDownloadDirectory();
+
+  const accept = await acceptDownloadItems(selectedTitles.length);
+  if (!accept) exit('Download cancelled');
+
+  const urls = flat(
+    select(
+      items,
+      (item) => item.entries.map(({ downloadUrl }: any) => downloadUrl) as string[],
+      (item) => selectedTitles.includes(item.title),
+    )
+  )
+
+  await downloadTorrents(urls, directory)
 }
 
-// sort items by title
-items.sort((a, b) => a.title.localeCompare(b.title));
-
-// TODO: fix duplicated entries when crawling. For now, we filter them out
-// const uniqueItems = items.filter((item, index, self) => index === self.findIndex((t) => t.title === item.title));
-
-const selectedIds = await selectItemsToDownload(items.map(({ title }) => ({ title })));
-
-const directory = await inputDownloadDirectory();
-
-const accept = await acceptDownloadItems(selectedIds.length);
-
-if (!accept) {
-  process.exit(0);
-}
-
-const urls = selectedIds.map((id: string) => items.find((item) => item.title === id)?.entries).flat().map((entry: any) => entry.downloadUrl);
-await downloadTorrents(urls, directory)
+main()

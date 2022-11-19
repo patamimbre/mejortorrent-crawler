@@ -6,7 +6,8 @@
     "dependencies": {
         "crawlee": "^3.0.0",
         "enquirer": "^2.3.6",
-        "got": "^12.5.3"
+        "got": "^12.5.3",
+        "radash": "^9.3.0"
     },
     "devDependencies": {
         "@apify/tsconfig": "^0.1.0",

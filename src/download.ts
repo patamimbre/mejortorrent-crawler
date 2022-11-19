@@ -1,11 +1,11 @@
 import Path from 'path';
 import got from 'got';
 import { createWriteStream } from 'fs';
+import { map, parallel, retry } from 'radash'
+
 
 export const downloadTorrents = async (urls: string[], folder: string) => {
-  for (const url of urls) {
-    await downloadFile(url, folder);
-  }
+  return map(urls, (url) => downloadFile(url, folder));
 }
 
 export const downloadFile = async (url: string, folder: string) => {
@@ -18,4 +18,10 @@ export const downloadFile = async (url: string, folder: string) => {
     const fileWriterStream = createWriteStream(path);
 
     downloadStream.pipe(fileWriterStream);
+    await new Promise((resolve, reject) => {
+      downloadStream.on('error', reject);
+      fileWriterStream.on('error', reject);
+      fileWriterStream.on('finish', resolve);
+    });
+    return path;
 }
