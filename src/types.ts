@@ -3,7 +3,7 @@ export type Item = {
     title: string;
     url: string;
     type: string;
-    entries?: ItemEntry[];
+    entries?: ItemEntry | SingleEntry[];
 }
 
 export type ItemEntry = {
@@ -12,4 +12,8 @@ export type ItemEntry = {
     date: string;
     key: string;
     downloadUrl: string;
+}
+
+export type SingleEntry = {
+  downloadUrl: string;
 }

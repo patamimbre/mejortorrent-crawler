@@ -6,7 +6,7 @@ import { errorLog, exit, infoLog, successLog } from './utils.js';
 
 const PARALLEL_DOWNLOADS = 5;
 export const downloadTorrents = async (urls: string[], folder: string) => {
-  infoLog(`Starting download of torrents:`, ...urls);
+  //infoLog(`Starting download of torrents:`, ...urls);
 
   // create folder if it doesn't exist
   const [err, __] = await _.try(promises.mkdir)(folder, { recursive: true });

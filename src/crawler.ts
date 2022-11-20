@@ -9,7 +9,7 @@ export default async function crawl(search: string) {
 
   await crawler.run([{
     url: `${BASE_URL}/busqueda?q=${search.replace(' ', '+')}`,
-    label: LABELS.SEARCH,
+    label: LABELS.SEARCH_RESULTS,
     userData: { search },
   }]);
 }
