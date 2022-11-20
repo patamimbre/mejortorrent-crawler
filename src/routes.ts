@@ -1,5 +1,6 @@
 import { LABELS } from './constants.js';
 import { Dataset, createCheerioRouter } from 'crawlee';
+import { Item, ItemEntry } from './types.js';
 
 export const router = createCheerioRouter();
 
@@ -22,7 +23,7 @@ router.addHandler(LABELS.SEARCH, async ({ request, $, crawler }) => {
     await crawler.addRequests(entries.map(entry => ({
         url: entry.url,
         label: LABELS.TORRENTS,
-        userData: { entry: { search, ...entry }},
+        userData: { entry: { search, ...entry } as Item},
     })) as any);
 });
 
@@ -37,13 +38,13 @@ router.addHandler(LABELS.TORRENTS, async ({ request, $ }) => {
         const key = $el.find('td:nth-child(4) p').text();
         const downloadUrl = $el.find('td:nth-child(5) a').attr('href');
 
-        return { id, episodes, date, key, downloadUrl };
+        return { id, episodes, date, key, downloadUrl } as ItemEntry;
     }).get();
 
     const data = {
         ...entry,
         entries,
-    };
+    } as Item;
 
     await Dataset.pushData(data);
 });

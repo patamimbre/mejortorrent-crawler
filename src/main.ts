@@ -4,6 +4,7 @@ import crawl from "./crawler.js";
 import { acceptDownloadItems, inputDownloadDirectory, inputSearchTerm, selectItemsToDownload } from "./cli.js";
 import { downloadTorrents } from './download.js';
 import { exit } from './utils.js';
+import { Item } from './types.js';
 
 async function main() {
   const search = await inputSearchTerm();
@@ -12,7 +13,7 @@ async function main() {
   const dataset = await Dataset.open();
   await purgeDefaultStorages();
 
-  const items = alphabetical((await dataset.getData()).items, x => x.title);
+  const items = alphabetical((await dataset.getData()).items as Item[], x => x.title);
   if (items.length === 0) exit('No items found');
 
   const selectedTitles = await selectItemsToDownload(items.map(({ title }) => ({ title })));
@@ -27,7 +28,7 @@ async function main() {
   const urls = flat(
     select(
       items,
-      (item) => item.entries.map(({ downloadUrl }: any) => downloadUrl) as string[],
+      (item) => item.entries?.map(({ downloadUrl }: any) => downloadUrl) as string[],
       (item) => selectedTitles.includes(item.title),
     )
   )
