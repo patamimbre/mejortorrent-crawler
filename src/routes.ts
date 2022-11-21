@@ -32,7 +32,8 @@ router.addHandler(LABELS.ENTRY, async ({ request, $ }) => {
 
     // Two different layouts for the same page depending on the type of content
     // First try to extract from the single entry layout
-    let entries = [{ downloadUrl: $('div.flex.items-center.just a').attr('href')} as SingleEntry]
+    const downloadUrl = $('div.flex.items-center.just a').attr('href');
+    let entries = downloadUrl ? [{ downloadUrl } as SingleEntry] : [];
 
     // If the single entry layout doesn't exist, try to extract from the multiple entries layout
     if (entries.length === 0) {
